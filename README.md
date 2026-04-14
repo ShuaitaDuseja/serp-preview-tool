@@ -34,8 +34,7 @@ The Google SERP Preview Tool is a simple and interactive frontend web applicatio
 
 ## 🌐 Live Demo
 
-👉 [https://ShuaitaDuseja.github.io/serp-preview-tool/](https://ShuaitaDuseja.github.io/serp-preview-tool/)
-
+👉 https://github.com/ShuaitaDuseja/serp-preview-tool
 ---
 
 ## 💻 Installation
