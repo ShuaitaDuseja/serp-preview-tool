@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Google SERP Preview Tool | Live SEO Snippet Simulator</title>
+
+  <link rel="canonical" href="https://serp-preview-tool.com" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    body {
+      font-family: 'Roboto', 'Arial', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: #f1f3f4;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    /* Dark mode body override */
+    body.dark {
+      background: #1e1f22;
+    }
+
+    /* Main card container */
+    .tool-container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      justify-content: center;
+    }
+
+    /* Editor panel & preview panel shared style */
+    .card {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      padding: 24px 28px;
+      transition: all 0.2s;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    body.dark .card {
+      background: #2c2e33;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Left panel (inputs) */
+    .editor-section {
+      flex: 1.2;
+    }
+
+    /* Right panel (SERP preview) */
+    .preview-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+      color: #1f2a3e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.dark h2 {
+      color: #e8eaed;
+    }
+
+    .input-group {
+      margin-bottom: 1.75rem;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #3c4043;
+    }
+
+    body.dark label {
+      color: #bdc1c6;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: 'Roboto', monospace;
+      font-size: 0.95rem;
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      background: white;
+      outline: none;
+      transition: 0.2s;
+      resize: vertical;
+    }
+
+    textarea {
+      min-height: 80px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    body.dark input, body.dark textarea {
+      background: #3c4043;
+      border-color: #5f6368;
+      color: #e8eaed;
+    }
+
+    .char-counter {
+      font-size: 0.75rem;
+      margin-top: 6px;
+      text-align: right;
+      color: #5f6368;
+    }
+
+    body.dark .char-counter {
+      color: #9aa0a6;
+    }
+
+    .warning {
+      color: #d93025 !important;
+      font-weight: 500;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 14px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #f1f3f4;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1a73e8;
+    }
+
+    .btn-primary {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .btn-primary:hover {
+      background: #d2e3fc;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #dadce0;
+    }
+
+    .btn-outline:hover {
+      background: #f1f3f4;
+    }
+
+    body.dark .btn {
+      background: #3c4043;
+      color: #8ab4f8;
+    }
+
+    body.dark .btn-primary {
+      background: #2b3b4f;
+      color: #8ab4f8;
+    }
+
+    body.dark .btn-outline {
+      border-color: #5f6368;
+    }
+
+    /* ----- GOOGLE SERP PREVIEW STYLES ----- */
+    .serp-preview-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px 0 10px 0;
+      width: 100%;
+    }
+
+    body.dark .serp-preview-card {
+      background: transparent;
+    }
+
+    .google-result {
+      font-family: 'Arial', 'Roboto', system-ui, sans-serif;
+      max-width: 600px;
+      word-wrap: break-word;
+    }
+
+    /* favicon + url line */
+    .preview-url {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: #202124;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    body.dark .preview-url {
+      color: #9aa0a6;
+    }
+
+    .favicon-placeholder {
+      width: 16px;
+      height: 16px;
+      background: #dadce0;
+      border-radius: 50%;
+      display: inline-block;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%235F6368"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>');
+      background-size: contain;
+    }
+
+    body.dark .favicon-placeholder {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23BDC1C6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>');
+    }
+
+    .url-domain {
+      color: #202124;
+      font-weight: 400;
+    }
+
+    body.dark .url-domain {
+      color: #bdc1c6;
+    }
+
+    .url-breadcrumb {
+      color: #5f6368;
+    }
+
+    /* title style - Google blue clickable */
+    .preview-title {
+      font-size: 1.25rem;
+      line-height: 1.3;
+      margin: 6px 0 4px;
+      font-weight: 400;
+    }
+
+    .preview-title a {
+      color: #1a0dab;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .preview-title a:hover {
+      text-decoration: underline;
+    }
+
+    body.dark .preview-title a {
+      color: #8ab4f8;
+    }
+
+    /* meta description */
+    .preview-description {
+      font-size: 0.875rem;
+      color: #4d5156;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    body.dark .preview-description {
+      color: #9aa0a6;
+    }
+
+    /* truncation utilities */
+    .truncate-title {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .truncate-desc {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    /* pixel width estimation (bonus) */
+    .pixel-estimate {
+      font-size: 0.7rem;
+      color: #5f6368;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid #ecedef;
+      display: flex;
+      justify-content: space-between;
+      font-family: monospace;
+    }
+
+    body.dark .pixel-estimate {
+      color: #9aa0a6;
+      border-top-color: #3c4043;
+    }
+
+    .reset-icon, .copy-icon {
+      font-size: 1rem;
+    }
+
+    /* responsive */
+    @media (max-width: 780px) {
+      .tool-container {
+        flex-direction: column;
+      }
+      .card {
+        padding: 20px;
+      }
+      .preview-title {
+        font-size: 1.1rem;
+      }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: #5f6368;
+    }
+
+    body.dark footer {
+      color: #9aa0a6;
+    }
+  </style>
+</head>
+<body>
+<div style="width: 100%;">
+  <div class="tool-container">
+    <!-- LEFT: Input Controls -->
+    <div class="card editor-section">
+      <h2>📝 SERP Preview Editor</h2>
+      <div class="input-group">
+        <label>
+          <span>🔗 Page Title</span>
+          <span id="titleCounter" class="char-counter">0 / 60</span>
+        </label>
+        <input type="text" id="pageTitle" placeholder="e.g., Best Frontend Tools & UI Resources 2025" maxlength="120" autocomplete="off">
+        <div id="titleWarning" class="char-counter"></div>
+      </div>
+
+      <div class="input-group">
+        <label>
+          <span>📄 Meta Description</span>
+          <span id="descCounter" class="char-counter">0 / 160</span>
+        </label>
+        <textarea id="metaDesc" rows="3" placeholder="Write a compelling meta description between 50–160 characters. Google often truncates longer texts." maxlength="320"></textarea>
+        <div id="descWarning" class="char-counter"></div>
+      </div>
+
+      <div class="input-group">
+        <label>🌐 URL (Slug preview)</label>
+        <input type="text" id="pageUrl" placeholder="example.com/blog/seo-tips" value="example.com/seo-preview-tool">
+      </div>
+
+      <div class="button-group">
+        <button id="resetBtn" class="btn btn-outline">⟳ Reset All</button>
+        <button id="copyPreviewBtn" class="btn btn-primary">📋 Copy Preview Text</button>
+        <button id="darkModeToggle" class="btn btn-outline">🌓 Dark Mode</button>
+      </div>
+      <div class="pixel-estimate" id="pixelWidthInfo">
+        <span>📏 Title width: <span id="titlePixelWidth">0</span> px</span>
+        <span>📐 Desc width: <span id="descPixelWidth">0</span> px</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: Google SERP Preview -->
+    <div class="card preview-section">
+      <h2>🔍 Google SERP Preview</h2>
+      <div class="serp-preview-card">
+        <div class="google-result">
+          <div class="preview-url">
+            <span class="favicon-placeholder"></span>
+            <span id="previewUrlDomain" class="url-domain">example.com</span>
+            <span id="previewUrlPath" class="url-breadcrumb"> › seo-preview-tool</span>
+          </div>
+          <div class="preview-title">
+            <a href="#" id="previewTitleLink">Your page title appears here</a>
+          </div>
+          <div class="preview-description truncate-desc" id="previewDescription">
+            This is where the meta description will be shown. It's a short snippet summarizing the page content.
+          </div>
+        </div>
+      </div>
+      <div class="pixel-estimate" style="margin-top: 16px;">
+        <span>✨ Real-time truncation simulates Google's behavior</span>
+      </div>
+    </div>
+  </div>
+  <footer>⚡ SERP Preview Tool — Title (max 60), Description (max 160) with character warning & dark mode</footer>
+</div>
+
+<script>
+  (function() {
+    // DOM elements
+    const titleInput = document.getElementById('pageTitle');
+    const descInput = document.getElementById('metaDesc');
+    const urlInput = document.getElementById('pageUrl');
+    const titleCounterSpan = document.getElementById('titleCounter');
+    const descCounterSpan = document.getElementById('descCounter');
+    const titleWarningDiv = document.getElementById('titleWarning');
+    const descWarningDiv = document.getElementById('descWarning');
+    const previewTitleLink = document.getElementById('previewTitleLink');
+    const previewDescriptionSpan = document.getElementById('previewDescription');
+    const previewUrlDomainSpan = document.getElementById('previewUrlDomain');
+    const previewUrlPathSpan = document.getElementById('previewUrlPath');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyPreviewBtn');
+    const darkToggle = document.getElementById('darkModeToggle');
+    const titlePixelSpan = document.getElementById('titlePixelWidth');
+    const descPixelSpan = document.getElementById('descPixelWidth');
+
+    // helper to get current theme
+    function isDarkMode() {
+      return document.body.classList.contains('dark');
+    }
+
+    // ---- core update live preview & char limits & truncation & pixel estimation ----
+    function updateAll() {
+      // 1. Get values
+      let rawTitle = titleInput.value;
+      let rawDesc = descInput.value;
+      let rawUrl = urlInput.value.trim();
+
+      // Title character limit warning (60)
+      const titleLen = rawTitle.length;
+      titleCounterSpan.innerText = `${titleLen} / 60`;
+      if (titleLen > 60) {
+        titleCounterSpan.classList.add('warning');
+        titleWarningDiv.innerHTML = '⚠️ Title exceeds 60 characters! Google will truncate it.';
+        titleWarningDiv.classList.add('warning');
+      } else {
+        titleCounterSpan.classList.remove('warning');
+        titleWarningDiv.innerHTML = '';
+        titleWarningDiv.classList.remove('warning');
+      }
+
+      // Description character limit (160)
+      const descLen = rawDesc.length;
+      descCounterSpan.innerText = `${descLen} / 160`;
+      if (descLen > 160) {
+        descCounterSpan.classList.add('warning');
+        descWarningDiv.innerHTML = '⚠️ Description exceeds 160 characters! It may be cut off in SERP.';
+        descWarningDiv.classList.add('warning');
+      } else {
+        descCounterSpan.classList.remove('warning');
+        descWarningDiv.innerHTML = '';
+        descWarningDiv.classList.remove('warning');
+      }
+
+      // ---- Title truncation with ellipsis (Google style, max ~ 70 chars but we emulate via CSS + JS truncation fallback)
+      // Actually google truncates by pixel width, but we provide smart truncation for very long titles: if > 70 char we can add ...
+      let displayTitle = rawTitle.trim();
+      if (displayTitle === "") displayTitle = "Untitled Page - SERP Preview";
+      // optional: extra truncation to simulate but CSS text-overflow is also applied. However we also respect max length
+      if (displayTitle.length > 70) {
+        // keep semantic truncation but CSS white-space nowrap will handle final overflow
+        // still we manually cut a bit to keep friendly
+        displayTitle = displayTitle.substring(0, 67) + "...";
+      }
+      previewTitleLink.innerText = displayTitle;
+      // set href to "#" to avoid navigation
+      previewTitleLink.href = "#";
+
+      // Description truncation: Google uses ~2 lines (approx 155-160 chars) and adds "..."
+      let displayDesc = rawDesc.trim();
+      if (displayDesc === "") displayDesc = "No meta description provided. Search engines may generate a snippet from page content.";
+      // extra manual truncation if it exceeds 160 chars to match visual expectations (but we also have CSS -webkit-line-clamp)
+      if (displayDesc.length > 160) {
+        let truncatedDesc = displayDesc.substring(0, 157).trim();
+        displayDesc = truncatedDesc + "...";
+      }
+      previewDescriptionSpan.innerText = displayDesc;
+
+      // ---- URL slug style formatting (like google green/gray) ----
+      let fullUrl = rawUrl;
+      if (fullUrl === "") fullUrl = "example.com/no-url-defined";
+      // parse to show domain + path
+      let domain = "";
+      let path = "";
+      try {
+        // if user enters with http/https we handle nicely
+        let urlObj = null;
+        let urlToParse = fullUrl;
+        if (!fullUrl.startsWith("http://") && !fullUrl.startsWith("https://")) {
+          urlToParse = "https://" + fullUrl;
+        }
+        urlObj = new URL(urlToParse);
+        domain = urlObj.hostname.replace(/^www\./, '');
+        path = urlObj.pathname;
+        if (path === "/") path = "";
+        // additional slug display (remove trailing slash)
+        if (path.length > 35) path = path.substring(0, 32) + "...";
+      } catch(e) {
+        // fallback: manual split
+        if (fullUrl.includes("/")) {
+          let parts = fullUrl.split("/");
+          domain = parts[0];
+          path = "/" + parts.slice(1).join("/");
+          if (path.length > 40) path = path.substring(0, 37) + "...";
+        } else {
+          domain = fullUrl;
+          path = "";
+        }
+      }
+      if (domain === "") domain = fullUrl.split("/")[0];
+      previewUrlDomainSpan.innerText = domain;
+      if (path && path !== "") {
+        let displayPath = path.length > 40 ? path.substring(0, 37) + "..." : path;
+        previewUrlPathSpan.innerText = displayPath;
+      } else {
+        previewUrlPathSpan.innerText = "";
+      }
+
+      // Bonus: pixel width estimation for title and description (advanced simulation)
+      estimatePixelWidth();
+    }
+
+    // Advanced: estimate pixel width using canvas (simulate Google behavior)
+    function estimatePixelWidth() {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      // Google SERP uses Arial / Roboto ~ 16px for title, 14px for description.
+      // Title font: Arial ~ 20px (approx weight normal)
+      const titleText = previewTitleLink.innerText;
+      const descText = previewDescriptionSpan.innerText;
+      if (context) {
+        // Title style ~ 20px Arial (like Google desktop)
+        context.font = '400 20px "Arial", "Roboto", sans-serif';
+        let titleWidth = context.measureText(titleText).width;
+        titlePixelSpan.innerText = Math.floor(titleWidth) + 'px';
+        // Description font: 14px Arial
+        context.font = '400 14px "Arial", "Roboto", sans-serif';
+        let descWidth = context.measureText(descText).width;
+        descPixelSpan.innerText = Math.floor(descWidth) + 'px';
+        // Optional warning if width > ~600px? but just show estimation
+        if (titleWidth > 580) {
+          titlePixelSpan.style.color = "#d93025";
+        } else {
+          titlePixelSpan.style.color = isDarkMode() ? "#9aa0a6" : "#5f6368";
+        }
+        if (descWidth > 580) {
+          descPixelSpan.style.color = "#d93025";
+        } else {
+          descPixelSpan.style.color = isDarkMode() ? "#9aa0a6" : "#5f6368";
+        }
+      } else {
+        titlePixelSpan.innerText = "N/A";
+        descPixelSpan.innerText = "N/A";
+      }
+    }
+
+    // Reset all fields to default meaningful values
+    function resetAll() {
+      titleInput.value = "Complete Guide to Modern Frontend Development 2025";
+      descInput.value = "Learn essential frontend techniques, responsive design, and performance optimization. Perfect for developers.";
+      urlInput.value = "developer-tools.com/guide/frontend-best-practices";
+      updateAll();
+      // extra UI feedback smooth
+      titleInput.focus();
+      // re-trigger blur
+    }
+
+    // Copy preview text: title + link + description as plain text snippet
+    function copyPreviewText() {
+      const titleText = previewTitleLink.innerText;
+      const urlText = previewUrlDomainSpan.innerText + (previewUrlPathSpan.innerText || "");
+      const descText = previewDescriptionSpan.innerText;
+      const copyContent = `${titleText}\n${urlText}\n${descText}`;
+      navigator.clipboard.writeText(copyContent).then(() => {
+        // brief visual feedback on copy button
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = "✅ Copied!";
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 1500);
+      }).catch(() => {
+        alert("Unable to copy, manual copy please.");
+      });
+    }
+
+    // Dark mode toggle with local persistence
+    function initDarkMode() {
+      const saved = localStorage.getItem('serpDarkMode');
+      if (saved === 'enabled') {
+        document.body.classList.add('dark');
+      } else if (saved === 'disabled') {
+        document.body.classList.remove('dark');
+      } else {
+        // follow system pref optionally? but we default to light
+        document.body.classList.remove('dark');
+      }
+      updatePixelColors();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      localStorage.setItem('serpDarkMode', isDark ? 'enabled' : 'disabled');
+      updatePixelColors();
+      updateAll(); // refresh pixel color warnings
+    }
+
+    function updatePixelColors() {
+      // just re-run estimation to refresh colors
+      estimatePixelWidth();
+    }
+
+    // Event listeners & real-time updates
+    function bindEvents() {
+      titleInput.addEventListener('input', updateAll);
+      descInput.addEventListener('input', updateAll);
+      urlInput.addEventListener('input', updateAll);
+      resetBtn.addEventListener('click', resetAll);
+      copyBtn.addEventListener('click', copyPreviewText);
+      darkToggle.addEventListener('click', toggleDarkMode);
+      // additional window load resize to re-calc pixel width
+      window.addEventListener('resize', () => {
+        estimatePixelWidth();
+      });
+    }
+
+    // add extra truncation class for title to force "..." if overflow (css)
+    function applyCSSTruncation() {
+      const titleLink = previewTitleLink;
+      titleLink.style.display = 'block';
+      titleLink.style.overflow = 'hidden';
+      titleLink.style.whiteSpace = 'nowrap';
+      titleLink.style.textOverflow = 'ellipsis';
+      titleLink.style.maxWidth = '100%';
+    }
+
+    // initial default values (sensible SERP demo)
+    function setInitialDemo() {
+      titleInput.value = "Modern Frontend & UI/UX Design Patterns 2025";
+      descInput.value = "Discover advanced CSS, responsive frameworks and accessibility best practices. Enhance your web projects.";
+      urlInput.value = "designsystem.example.com/trends/modern-ui";
+      updateAll();
+    }
+
+    // Helper to also update favicon background and ensure dynamic theme updates.
+    function fixDynamicColors() {
+      // no extra
+    }
+
+    // start everything
+    function init() {
+      initDarkMode();
+      setInitialDemo();
+      bindEvents();
+      applyCSSTruncation();
+      updateAll();
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
