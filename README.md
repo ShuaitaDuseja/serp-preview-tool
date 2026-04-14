@@ -1,9 +1,11 @@
+
 # 🚀 Google SERP Preview Tool
 
 ## 📌 Description
 
-The Google SERP Preview Tool is a simple and interactive frontend web application that helps users visualize how their webpage will appear in Google search results. It allows users to preview and optimize their SEO title, meta description, and URL in real-time for better search engine visibility and click-through rates.
+The Google SERP Preview Tool is a simple and interactive frontend web application that helps users visualize how their webpage will appear in Google search results. It allows users to preview and optimize their SEO title, meta description, and URL in real-time, improving search engine visibility and click-through rates.
 
+---
 
 ## ✨ Features
 
@@ -15,6 +17,7 @@ The Google SERP Preview Tool is a simple and interactive frontend web applicatio
 * 📋 Copy preview text feature
 * 🔗 Live URL preview (domain + slug formatting)
 
+---
 
 ## 🛠️ Technologies Used
 
@@ -22,6 +25,7 @@ The Google SERP Preview Tool is a simple and interactive frontend web applicatio
 * CSS
 * JavaScript
 
+---
 
 ## ▶️ How to Use
 
@@ -32,9 +36,12 @@ The Google SERP Preview Tool is a simple and interactive frontend web applicatio
 5. View live Google SERP preview on the right side
 6. Use dark mode or copy preview if needed
 
+---
+
 ## 🌐 Live Demo
 
-👉 https://github.com/ShuaitaDuseja/serp-preview-tool
+👉 [https://shuaitaduseja.github.io/serp-preview-tool/](https://shuaitaduseja.github.io/serp-preview-tool/)
+
 ---
 
 ## 💻 Installation
@@ -49,9 +56,13 @@ Then open:
 index.html
 ```
 
+---
+
 ## 👩‍💻 Author
 
 Shuaita Duseja
+
+---
 
 ## ⭐ Note
 
